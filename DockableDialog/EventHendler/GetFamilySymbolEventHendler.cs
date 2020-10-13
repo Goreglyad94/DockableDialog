@@ -27,6 +27,7 @@ namespace DockableDialog.EventHendler
             Autodesk.Revit.DB.Document doc = uidoc.Document;
             Selection sel = app.ActiveUIDocument.Selection;
             ICollection<Autodesk.Revit.DB.ElementId> selectedIds = uidoc.Selection.GetElementIds();
+
             
 
             //Reference annotation = sel.PickObject(ObjectType.Element, "Select item");

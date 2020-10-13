@@ -27,7 +27,6 @@ namespace DockableDialog
             #region Регистрация нового окна, новый ViewModel, регистрация нового внешнего события
             Viewer dock = new Viewer();
             dockableWindow = dock;
-            
 
             // create a new dockable pane id
             DockablePaneId id = new DockablePaneId(new Guid("{68D44FAC-CF09-46B2-9544-D5A3F809373C}"));
@@ -73,15 +72,20 @@ namespace DockableDialog
             //showButton.LargeImage = GetResourceImage(assembly, "Resources.green.png");
             //showButton.Image = GetResourceImage(assembly, "Resources.green.png");
 
-            MainWindowViewModel mainWindowViewModel = new MainWindowViewModel();
+            MainWindowViewModel mainWindowViewModel = new MainWindowViewModel(application);
 
             GetFamilySymbolEventHendler registerEventHendler = new GetFamilySymbolEventHendler();
             PasteFamilyEventHendler pasteFamilyEventHendler = new PasteFamilyEventHendler();
+            ShowImageSelectWindowEventHendler showImageSelectWindowEventHendler = new ShowImageSelectWindowEventHendler();
+
             ExternalEvent ExEventGetFamily = ExternalEvent.Create(registerEventHendler);
             ExternalEvent ExEventPasteFamily = ExternalEvent.Create(pasteFamilyEventHendler);
-            
+            ExternalEvent ExEventShowDialig = ExternalEvent.Create(showImageSelectWindowEventHendler);
+
+
             mainWindowViewModel.ApplyEventGetFamily = ExEventGetFamily;
             mainWindowViewModel.ApplyPasteGetFamily = ExEventPasteFamily;
+            mainWindowViewModel.ApplyEventShowDialog = ExEventShowDialig;
 
             dockableWindow.DataContext = mainWindowViewModel;
 

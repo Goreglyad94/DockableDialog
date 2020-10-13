@@ -4,9 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:DockableDialog"
-             mc:Ignorable="d" d:DesignHeight="350" d:DesignWidth="200" Title="WPF Sample" Background="White" x:Name="Pageg">
+             mc:Ignorable="d" d:DesignHeight="350" Width="{Binding ValueWidthWindow, Mode=TwoWay}" Title="WPF Sample" Background="White" x:Name="Pageg">
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+    </Page.Resources>
     <Grid Background="White" Margin="5" >
-            <Grid.RowDefinitions>
+        <Grid.RowDefinitions>
                 <RowDefinition x:Name="Row"/>
                 <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
@@ -24,7 +27,12 @@
                                         VerticalAlignment="Center">
                                     <Image Source="Resources/orange.png"></Image>
                                 </Button>
-                                <TextBlock Text="{Binding Name}" DockPanel.Dock="Top" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                <TextBlock 
+                                    Text="{Binding Name}" 
+                                    DockPanel.Dock="Top" 
+                                    VerticalAlignment="Center" 
+                                    HorizontalAlignment="Left"
+                                    Visibility="{Binding DataContext.IsVisable, Converter={StaticResource BoolToVisConverter}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}} }"/>
                             </DockPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

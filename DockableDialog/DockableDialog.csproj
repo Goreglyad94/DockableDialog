@@ -55,8 +55,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DTO\FamilyDto.cs" />
+    <Compile Include="DTO\ImageDto.cs" />
     <Compile Include="EventHendler\PasteFamilyEventHendler.cs" />
     <Compile Include="EventHendler\GetFamilySymbolEventHendler.cs" />
+    <Compile Include="EventHendler\ShowImageSelectWindowEventHendler.cs" />
+    <Compile Include="ImageSelect.xaml.cs">
+      <DependentUpon>ImageSelect.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\ImageSelectViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -71,6 +77,10 @@
     <Compile Include="ViewModel\RelayCommand.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="ImageSelect.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Viewer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -83,13 +93,19 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\green.png" />
+    <Resource Include="Resources\green.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\orange.png" />
+    <Resource Include="Resources\orange.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\red.png" />
+    <Resource Include="Resources\red.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <Content Include="DockableDialog.addin" />

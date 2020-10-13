@@ -14,6 +14,9 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using DockableDialog.EventHendler;
+using System.Windows.Interop;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace DockableDialog.ViewModel
 {
@@ -44,16 +47,55 @@ namespace DockableDialog.ViewModel
             PropertyChanged?.Invoke(this, args);
         }
         #endregion
+
+        /// <summary>DoWork is a method in the TestClass class.
+        /// <para>Here's how you could make a second paragraph in a description. <see cref="System.Console.WriteLine(System.String)"/> for information about output statements.</para>
+        /// <seealso cref="TestClass.Main"/>
+        /// </summary>
+        private int valueWidthWindow;
+        public int ValueWidthWindow
+        {
+            get { return valueWidthWindow; }
+            set
+            {
+                valueWidthWindow = value;
+                if (valueWidthWindow < 150)
+                {
+                    IsVisable = false;
+                }
+                else
+                {
+                    IsVisable = true;
+                }
+                RaisePropertyChanged("ValueWidthWindow");
+            }
+        }
+        private bool isVisable;
+        public bool IsVisable
+        {
+            get { return isVisable; }
+            set
+            {
+                isVisable = value;
+                RaisePropertyChanged("IsVisable");
+            }
+        }
+
         public static ObservableCollection<FamilyDto> FamilySymbolList = new ObservableCollection<FamilyDto>();
         public ICommand AddFamily { get; set; }
         public ICommand UseFamily { get; set; }
 
         public ExternalEvent ApplyEventGetFamily;
         public ExternalEvent ApplyPasteGetFamily;
-        public MainWindowViewModel()
+        public ExternalEvent ApplyEventShowDialog;
+
+        UIControlledApplication UIApp;
+        public MainWindowViewModel(UIControlledApplication uIApp)
         {
+            UIApp = uIApp;
             AddFamily = new RelayCommand(o => AddFamilyMethod("MainButton"));
             UseFamily = new RelayCommand(o => UseFamilyMethod(o));
+            ValueWidthWindow = 250;
         }
 
 
@@ -67,6 +109,20 @@ namespace DockableDialog.ViewModel
         private void AddFamilyMethod(object o)
         {
             ApplyEventGetFamily.Raise();
+
+            ActivateWindow();
+            ImageSelect MyWindow = new ImageSelect();
+            HwndSource hwndSource = HwndSource.FromHwnd(UIApp.MainWindowHandle);
+            Window wnd = hwndSource.RootVisual as Window;
+            if (wnd != null)
+            {
+                MyWindow.Owner = wnd;
+                //MyWindow.ShowInTaskbar = false;
+                MyWindow.Show();
+            }
+
+            
+
             FamDtoList = CollectionViewSource.GetDefaultView(FamilySymbolList);
             FamDtoList.Refresh();
         }
@@ -75,5 +131,21 @@ namespace DockableDialog.ViewModel
             PasteFamilyEventHendler.familyDto = o as FamilyDto;
             ApplyPasteGetFamily.Raise();
         }
+        public static bool ActivateWindow()
+        {
+            Process p = Process.GetProcessesByName("Revit").FirstOrDefault();
+            IntPtr ptr = p.MainWindowHandle;
+
+            if (ptr != IntPtr.Zero)
+            {
+                return SetForegroundWindow(ptr);
+            }
+
+            return false;
+        }
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
     }
 }
