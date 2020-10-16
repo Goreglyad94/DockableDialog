@@ -18,6 +18,8 @@ namespace DockableDialog.EventHendler
     [Regeneration(RegenerationOption.Manual)]
     class GetFamilySymbolEventHendler : IExternalEventHandler
     {
+        public static string Path;
+        public static string FamilyName;
         public void Execute(UIApplication app)
         {
             Transaction trans = new Transaction(app.ActiveUIDocument.Document, "Получить выбранные семейства");
@@ -34,10 +36,18 @@ namespace DockableDialog.EventHendler
             FamilyInstance elem = doc.GetElement(selectedIds.FirstOrDefault()) as FamilyInstance;
             FamilySymbol familySymbol = elem.Symbol;
             FamilyDto famDto = new FamilyDto();
-            famDto.Name = familySymbol.Name;
+            if (FamilyName == null || FamilyName == "")
+            {
+                famDto.Name = familySymbol.Name;
+            }
+            else
+            {
+                famDto.Name = FamilyName;
+            }
+
             famDto.FamilySymbolDto = familySymbol;
+            famDto.ImagePath = Path;
             MainWindowViewModel.FamilySymbolList.Add(famDto);
-            MessageBox.Show(familySymbol.Name.ToString());
             trans.Commit();
         }
         public string GetName() => nameof(GetFamilySymbolEventHendler);

@@ -4,41 +4,98 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:DockableDialog"
-             mc:Ignorable="d" d:DesignHeight="350" Width="{Binding ValueWidthWindow, Mode=TwoWay}" Title="WPF Sample" Background="White" x:Name="Pageg">
+             mc:Ignorable="d" d:DesignHeight="350" Width="{Binding ValueWidthWindow, Mode=TwoWay}" Title="WPF Sample" Background="White" x:Name="Pageg" >
+    <!--Width="{Binding ValueWidthWindow, Mode=TwoWay}" Title="WPF Sample" Background="White" x:Name="Pageg"-->
     <Page.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
+        <Style x:Key="SimpleListBoxItem" TargetType="ListBoxItem">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border Name="Border" Padding="2" SnapsToDevicePixels="true">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter TargetName="Border" Property="Background" Value="White"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Page.Resources>
     <Grid Background="White" Margin="5" >
         <Grid.RowDefinitions>
-                <RowDefinition x:Name="Row"/>
-                <RowDefinition Height="30"/>
-            </Grid.RowDefinitions>
-            <DockPanel Grid.Row="0" Width="auto">
-            <ListBox BorderThickness="0" ItemsSource="{Binding FamDtoList}" HorizontalAlignment="Center" DockPanel.Dock="Top" Height="{Binding ElementName=Row, Path=Height}" Width="auto">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <DockPanel HorizontalAlignment="Center">
-                                <Button Command="{Binding DataContext.UseFamily, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}" 
+            <RowDefinition  Height="30"/>
+            <RowDefinition  x:Name="Row"/>
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0">
+            <TextBox Text="{Binding FamilyName, Mode=TwoWay}" 
+                     Width="{Binding TextboxWidth, Mode=TwoWay}" 
+                     DockPanel.Dock="Left"
+                     Visibility="{Binding IsVisable, Converter={StaticResource BoolToVisConverter}, Mode=TwoWay}"/>
+            <ComboBox ItemsSource="{Binding ImageDtoList}" Width="60" SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}" DockPanel.Dock="Left" Visibility="{Binding IsVisable, Converter={StaticResource BoolToVisConverter}}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding Path}" Width="25" Height="25"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button Visibility="{Binding IsVisable, Converter={StaticResource BoolToVisConverter}}" Width="24" Height="24" Content="+" Command="{Binding AddFamily}" DockPanel.Dock="Left" Grid.Row="1" HorizontalAlignment="Left" Margin="2 2 2 2"/>
+        </DockPanel>
+        <DockPanel Grid.Row="1" Width="auto">
+            <ListBox BorderThickness="0" 
+                     ItemsSource="{Binding FamDtoList}" 
+                     HorizontalAlignment="Left" 
+                     DockPanel.Dock="Top" 
+                     Height="{Binding ElementName=Row, Path=Height}" 
+                     Width="{Binding ListboxWidth, Mode=TwoWay}" 
+                     ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                     ItemContainerStyle="{StaticResource SimpleListBoxItem}">
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel HorizontalAlignment="Left" Margin="25 0 0 0">
+
+                            <Grid DockPanel.Dock="Left">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="34"/>
+                                    <RowDefinition Height="15"/>
+                                </Grid.RowDefinitions>
+                                <DockPanel Grid.Row="0">
+                                    <Button Command="{Binding DataContext.UseFamily, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}" 
                                         CommandParameter="{Binding }"
-                                        DockPanel.Dock="Top" 
                                         Background="White" 
+                                            DockPanel.Dock="Left"
                                         Width="32" Height="32" 
-                                        HorizontalAlignment="Left" 
-                                        VerticalAlignment="Center">
-                                    <Image Source="Resources/orange.png"></Image>
-                                </Button>
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center" ToolTip="{Binding Name}">
+                                        <Image Source="{Binding ImagePath}"></Image>
+                                    </Button>
+                                    <Button 
+                                        DockPanel.Dock="Left" 
+                                        Width="15" Height="15" 
+                                        Margin="10 0 0 0" 
+                                        VerticalAlignment="Center" 
+                                        HorizontalAlignment="Left"
+                                        Visibility="{Binding DataContext.IsVisable, Converter={StaticResource BoolToVisConverter}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}} }">
+                                        <Image Source="Resources/icons8-minus-64.png"></Image>
+                                    </Button>
+                                </DockPanel>
+
                                 <TextBlock 
                                     Text="{Binding Name}" 
-                                    DockPanel.Dock="Top" 
+                                    Grid.Row="1"
                                     VerticalAlignment="Center" 
                                     HorizontalAlignment="Left"
                                     Visibility="{Binding DataContext.IsVisable, Converter={StaticResource BoolToVisConverter}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}} }"/>
-                            </DockPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </DockPanel>
-            <Button Width="24" Height="24" Content="+" Command="{Binding AddFamily}" DockPanel.Dock="Top" Grid.Row="1" HorizontalAlignment="Right" Margin="2 2 2 2"/>
-        </Grid>
-
+                            </Grid>
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+    </Grid>
 </Page>

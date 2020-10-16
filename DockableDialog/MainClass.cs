@@ -73,22 +73,23 @@ namespace DockableDialog
             //showButton.Image = GetResourceImage(assembly, "Resources.green.png");
 
             MainWindowViewModel mainWindowViewModel = new MainWindowViewModel(application);
+            //ImageSelectViewModel imageSelectViewModel = new ImageSelectViewModel();
 
             GetFamilySymbolEventHendler registerEventHendler = new GetFamilySymbolEventHendler();
             PasteFamilyEventHendler pasteFamilyEventHendler = new PasteFamilyEventHendler();
-            ShowImageSelectWindowEventHendler showImageSelectWindowEventHendler = new ShowImageSelectWindowEventHendler();
+
 
             ExternalEvent ExEventGetFamily = ExternalEvent.Create(registerEventHendler);
             ExternalEvent ExEventPasteFamily = ExternalEvent.Create(pasteFamilyEventHendler);
-            ExternalEvent ExEventShowDialig = ExternalEvent.Create(showImageSelectWindowEventHendler);
+
 
 
             mainWindowViewModel.ApplyEventGetFamily = ExEventGetFamily;
             mainWindowViewModel.ApplyPasteGetFamily = ExEventPasteFamily;
-            mainWindowViewModel.ApplyEventShowDialog = ExEventShowDialig;
+
 
             dockableWindow.DataContext = mainWindowViewModel;
-
+            //imageSelect.DataContext = imageSelectViewModel;
             // return status
             return Result.Succeeded;
         }
@@ -131,6 +132,7 @@ namespace DockableDialog
                 DockablePaneId id = new DockablePaneId(new Guid("{68D44FAC-CF09-46B2-9544-D5A3F809373C}"));
                 DockablePane dockableWindow = commandData.Application.GetDockablePane(id);
                 dockableWindow.Show();
+                
             }
             catch (Exception ex)
             {

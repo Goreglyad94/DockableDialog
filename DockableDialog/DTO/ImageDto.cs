@@ -8,6 +8,10 @@ namespace DockableDialog.DTO
 {
     class ImageDto
     {
+        public ImageDto(string path)
+        {
+            Path = path;
+        }
         public string Path { get; set; }
     }
 }

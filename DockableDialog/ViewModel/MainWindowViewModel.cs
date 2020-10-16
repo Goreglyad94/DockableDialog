@@ -67,6 +67,8 @@ namespace DockableDialog.ViewModel
                 {
                     IsVisable = true;
                 }
+                TextboxWidth = ValueWidthWindow - 125;
+                ListboxWidth = ValueWidthWindow;
                 RaisePropertyChanged("ValueWidthWindow");
             }
         }
@@ -87,7 +89,7 @@ namespace DockableDialog.ViewModel
 
         public ExternalEvent ApplyEventGetFamily;
         public ExternalEvent ApplyPasteGetFamily;
-        public ExternalEvent ApplyEventShowDialog;
+        
 
         UIControlledApplication UIApp;
         public MainWindowViewModel(UIControlledApplication uIApp)
@@ -96,6 +98,14 @@ namespace DockableDialog.ViewModel
             AddFamily = new RelayCommand(o => AddFamilyMethod("MainButton"));
             UseFamily = new RelayCommand(o => UseFamilyMethod(o));
             ValueWidthWindow = 250;
+
+            List<ImageDto> imageDtos = new List<ImageDto>();
+
+            imageDtos.Add(new ImageDto("Resources/green.png"));
+            imageDtos.Add(new ImageDto("Resources/orange.png"));
+            imageDtos.Add(new ImageDto("Resources/red.png"));
+            ImageDtoList = CollectionViewSource.GetDefaultView(imageDtos);
+            ImageDtoList.Refresh();
         }
 
 
@@ -110,19 +120,6 @@ namespace DockableDialog.ViewModel
         {
             ApplyEventGetFamily.Raise();
 
-            ActivateWindow();
-            ImageSelect MyWindow = new ImageSelect();
-            HwndSource hwndSource = HwndSource.FromHwnd(UIApp.MainWindowHandle);
-            Window wnd = hwndSource.RootVisual as Window;
-            if (wnd != null)
-            {
-                MyWindow.Owner = wnd;
-                //MyWindow.ShowInTaskbar = false;
-                MyWindow.Show();
-            }
-
-            
-
             FamDtoList = CollectionViewSource.GetDefaultView(FamilySymbolList);
             FamDtoList.Refresh();
         }
@@ -131,21 +128,62 @@ namespace DockableDialog.ViewModel
             PasteFamilyEventHendler.familyDto = o as FamilyDto;
             ApplyPasteGetFamily.Raise();
         }
-        public static bool ActivateWindow()
+
+        private ICollectionView imageDtoList;
+
+        public ICollectionView ImageDtoList
         {
-            Process p = Process.GetProcessesByName("Revit").FirstOrDefault();
-            IntPtr ptr = p.MainWindowHandle;
-
-            if (ptr != IntPtr.Zero)
-            {
-                return SetForegroundWindow(ptr);
-            }
-
-            return false;
+            get => imageDtoList;
+            set => SetProperty(ref imageDtoList, value);
         }
 
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool SetForegroundWindow(IntPtr hWnd);
+        private ImageDto p_SelectedItem;
+        public ImageDto SelectedItem
+        {
+            get { return p_SelectedItem; }
+
+            set
+            {
+                p_SelectedItem = value;
+                GetFamilySymbolEventHendler.Path = SelectedItem.Path;
+                RaisePropertyChanged("SelectedItem");
+            }
+        }
+        private int textboxWidth;
+
+        public int TextboxWidth
+        {
+            get { return textboxWidth; }
+            set 
+            { 
+                textboxWidth = value;
+                RaisePropertyChanged("TextboxWidth");
+            }
+        }
+
+
+        private int listboxWidth;
+
+        public int ListboxWidth
+        {
+            get { return listboxWidth; }
+            set 
+            { 
+                listboxWidth = value;
+                RaisePropertyChanged("ListboxWidth");
+
+            }
+        }
+
+        private string familyName;
+        public string FamilyName
+        {
+            get { return familyName; }
+            set 
+            { 
+                familyName = value;
+                GetFamilySymbolEventHendler.FamilyName = FamilyName;
+            }
+        }
     }
 }

@@ -27,7 +27,6 @@ namespace DockableDialog.EventHendler
             trans.Start();
             UIDocument uidoc = app.ActiveUIDocument;
             Autodesk.Revit.DB.Document doc = uidoc.Document;
-            TaskDialog.Show("а это ревитовская херная", "");
             XYZ xYZ = new XYZ(0, 0, 0);
             //try
             //{

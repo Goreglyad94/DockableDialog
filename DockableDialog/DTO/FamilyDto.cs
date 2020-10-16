@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace DockableDialog.DTO
 {
-    class FamilyDto
+    public class FamilyDto
     {
         public string Name { get; set; }
         public FamilySymbol FamilySymbolDto { get; set; }
+        public string ImagePath { get; set; }
     }
 }
