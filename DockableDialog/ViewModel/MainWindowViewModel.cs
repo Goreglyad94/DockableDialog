@@ -17,12 +17,13 @@ using DockableDialog.EventHendler;
 using System.Windows.Interop;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using DockableDialog.Model;
 
 namespace DockableDialog.ViewModel
 {
     class MainWindowViewModel : INotifyPropertyChanged
     {
-    
+
         #region INotifyPropertyChanged realise
         public event PropertyChangedEventHandler PropertyChanged;
         public int GetPropertyChangedSubscribledLenght()
@@ -47,6 +48,8 @@ namespace DockableDialog.ViewModel
             PropertyChanged?.Invoke(this, args);
         }
         #endregion
+
+        XmlSerializerModel xmlSerializerModel = new XmlSerializerModel();
 
         /// <summary>DoWork is a method in the TestClass class.
         /// <para>Here's how you could make a second paragraph in a description. <see cref="System.Console.WriteLine(System.String)"/> for information about output statements.</para>
@@ -84,12 +87,14 @@ namespace DockableDialog.ViewModel
         }
 
         public static ObservableCollection<FamilyDto> FamilySymbolList = new ObservableCollection<FamilyDto>();
+        List<FamilyDto> FamilyDtosList = new List<FamilyDto>();
         public ICommand AddFamily { get; set; }
         public ICommand UseFamily { get; set; }
+        public ICommand RemoveFamily { get; set; }
 
         public ExternalEvent ApplyEventGetFamily;
         public ExternalEvent ApplyPasteGetFamily;
-        
+
 
         UIControlledApplication UIApp;
         public MainWindowViewModel(UIControlledApplication uIApp)
@@ -97,6 +102,7 @@ namespace DockableDialog.ViewModel
             UIApp = uIApp;
             AddFamily = new RelayCommand(o => AddFamilyMethod("MainButton"));
             UseFamily = new RelayCommand(o => UseFamilyMethod(o));
+            RemoveFamily = new RelayCommand(o => RemoveFamilyMethod(o));
             ValueWidthWindow = 250;
 
             List<ImageDto> imageDtos = new List<ImageDto>();
@@ -118,15 +124,39 @@ namespace DockableDialog.ViewModel
         }
         private void AddFamilyMethod(object o)
         {
-            ApplyEventGetFamily.Raise();
 
-            FamDtoList = CollectionViewSource.GetDefaultView(FamilySymbolList);
-            FamDtoList.Refresh();
+            ApplyEventGetFamily.Raise();
+            
+            try
+            {
+                FamDtoList = CollectionViewSource.GetDefaultView(FamilySymbolList);
+                FamDtoList.Refresh();
+                File.Delete(@"C:\ProgramData\Autodesk\Revit\Addins\2019\FamilyPalette.xml");
+                xmlSerializerModel.ParamsXmlSerializer(FamilySymbolList);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
         private void UseFamilyMethod(object o)
         {
             PasteFamilyEventHendler.familyDto = o as FamilyDto;
             ApplyPasteGetFamily.Raise();
+        }
+        public void RemoveFamilyMethod(object o)
+        {
+            try
+            {
+                FamilySymbolList.Remove(o as FamilyDto);
+                FamDtoList = CollectionViewSource.GetDefaultView(FamilySymbolList);
+                FamDtoList.Refresh();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private ICollectionView imageDtoList;
@@ -154,8 +184,8 @@ namespace DockableDialog.ViewModel
         public int TextboxWidth
         {
             get { return textboxWidth; }
-            set 
-            { 
+            set
+            {
                 textboxWidth = value;
                 RaisePropertyChanged("TextboxWidth");
             }
@@ -167,8 +197,8 @@ namespace DockableDialog.ViewModel
         public int ListboxWidth
         {
             get { return listboxWidth; }
-            set 
-            { 
+            set
+            {
                 listboxWidth = value;
                 RaisePropertyChanged("ListboxWidth");
 
@@ -179,8 +209,8 @@ namespace DockableDialog.ViewModel
         public string FamilyName
         {
             get { return familyName; }
-            set 
-            { 
+            set
+            {
                 familyName = value;
                 GetFamilySymbolEventHendler.FamilyName = FamilyName;
             }

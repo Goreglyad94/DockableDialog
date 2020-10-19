@@ -74,11 +74,12 @@
                                         VerticalAlignment="Center" ToolTip="{Binding Name}">
                                         <Image Source="{Binding ImagePath}"></Image>
                                     </Button>
-                                    <Button 
+                                    <Button Command="{Binding DataContext.RemoveFamily, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}"
+                                        CommandParameter="{Binding }"
                                         DockPanel.Dock="Left" 
                                         Width="15" Height="15" 
                                         Margin="10 0 0 0" 
-                                        VerticalAlignment="Center" 
+                                        VerticalAlignment="Center"  
                                         HorizontalAlignment="Left"
                                         Visibility="{Binding DataContext.IsVisable, Converter={StaticResource BoolToVisConverter}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}} }">
                                         <Image Source="Resources/icons8-minus-64.png"></Image>
