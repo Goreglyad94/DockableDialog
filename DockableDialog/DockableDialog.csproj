@@ -90,7 +90,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DockableDialog.addin" />
-    <None Include="Resources\floppy-disk.png" />
+    <Resource Include="Resources\floppy-disk.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\minus.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

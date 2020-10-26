@@ -19,6 +19,9 @@ namespace TestFamilyPaste
         List<ElementId> _added_element_ids = new List<ElementId>();
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
+            var dfdf = Directory.GetFiles(@"C:\ProgramData\Autodesk\Revit\Addins\2019\FamilyPalette.xml");
+
+
             UIApplication uiapp = commandData.Application;
             UIDocument uidoc = uiapp.ActiveUIDocument;
             Autodesk.Revit.DB.Document doc = uidoc.Document;

@@ -76,7 +76,20 @@ namespace DockableDialog.ViewModel
             GetFamilySymbolEventHendler.ChangeUI += TimeStopAddFamily;
             GetFamilyByIdEventHendler.ChangedUIAndAddSerializer += RefreshMethodTimeStop;
 
-            familySetDtos = XmlSerializerModel.ParamsXmlDeserializer();
+            if (File.Exists(@"C:\ProgramData\Autodesk\Revit\Addins\2019\FamilyPalette.xml"))
+            {
+                familySetDtos = XmlSerializerModel.ParamsXmlDeserializer();
+            }
+            else
+            {
+                FamilySetDto familySetDto = new FamilySetDto();
+                familySetDto.Name = "Empty";
+                XmlSerializerModel.ParamsXmlSerializer(familySetDtos);
+                familySetDtos = XmlSerializerModel.ParamsXmlDeserializer();
+            }
+
+
+            
             FamilySetDtoList = CollectionViewSource.GetDefaultView(familySetDtos);
             FamilySetDtoList.Refresh();
         }
@@ -326,7 +339,7 @@ namespace DockableDialog.ViewModel
             get => familySetDtoList;
             set => SetProperty(ref familySetDtoList, value);
         }
-       
+
         /// <summary>
         /// Забить имя набора семейств
         /// </summary>
