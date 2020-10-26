@@ -39,12 +39,20 @@ namespace DockableDialog.EventHendler
             trans.Commit();
             try
             {
-                uidoc.PromptForFamilyInstancePlacement(familyDto.FamilySymbolDto as FamilySymbol);
+                if (familyDto.FamilySymbolDto == null)
+                {
+                    MessageBox.Show("Выбранное семейство отсутствует в проекте", "Ошибка");
+                }
+                else 
+                {
+                    uidoc.PromptForFamilyInstancePlacement(familyDto.FamilySymbolDto as FamilySymbol);
+                }
             }
             catch { }
-            
+
         }
 
         public string GetName() => nameof(PasteFamilyEventHendler);
+
     }
 }

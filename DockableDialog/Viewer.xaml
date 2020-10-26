@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:DockableDialog"
              mc:Ignorable="d" d:DesignHeight="350" Width="{Binding ValueWidthWindow, Mode=TwoWay}" Title="WPF Sample" Background="White" x:Name="Pageg" >
-    <!--Width="{Binding ValueWidthWindow, Mode=TwoWay}" Title="WPF Sample" Background="White" x:Name="Pageg"-->
     <Page.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisConverter"/>
         <Style x:Key="SimpleListBoxItem" TargetType="ListBoxItem">
@@ -28,27 +27,110 @@
     </Page.Resources>
     <Grid Background="White" Margin="5" >
         <Grid.RowDefinitions>
-            <RowDefinition  Height="30"/>
+            <RowDefinition  Height="45"/>
+            <RowDefinition  Height="45"/>
             <RowDefinition  x:Name="Row"/>
         </Grid.RowDefinitions>
-        <DockPanel Grid.Row="0">
-            <TextBox Text="{Binding FamilyName, Mode=TwoWay}" 
-                     Width="{Binding TextboxWidth, Mode=TwoWay}" 
-                     DockPanel.Dock="Left"
-                     Visibility="{Binding IsVisable, Converter={StaticResource BoolToVisConverter}, Mode=TwoWay}"/>
-            <ComboBox ItemsSource="{Binding ImageDtoList}" Width="60" SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}" DockPanel.Dock="Left" Visibility="{Binding IsVisable, Converter={StaticResource BoolToVisConverter}}">
+        <TextBlock Text="Добавить новый набор семейств:" Grid.Row="0" VerticalAlignment="Top" Visibility="{Binding IsVisable, Converter={StaticResource BoolToVisConverter}, Mode=TwoWay}"/>
+        <Line Stroke="Black" X2="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
+                 StrokeDashArray="2 2" StrokeThickness="1"  Grid.Row="1" VerticalAlignment="Top" Visibility="{Binding IsVisable, Converter={StaticResource BoolToVisConverter}, Mode=TwoWay}"/>
+        <TextBlock Text="Добавить семейство в набор:" Grid.Row="1" VerticalAlignment="Top" Visibility="{Binding IsVisable, Converter={StaticResource BoolToVisConverter}, Mode=TwoWay}"/>
+        <DockPanel Grid.Row="0" VerticalAlignment="Bottom" Visibility="{Binding IsVisable, Converter={StaticResource BoolToVisConverter}, Mode=TwoWay}">
+            <TextBox Text="{Binding FamilySetName, Mode=TwoWay}" Visibility="{Binding IsVisable}" Width="{Binding TextboxWidth, Mode=TwoWay}" Height="26" DockPanel.Dock="Left" Margin="0 0 5 0"/>
+            <ComboBox SelectedItem="{Binding Path=SelectedFamilySet, Mode=TwoWay}" Visibility="{Binding IsVisable}" Width="90" Height="26" ItemsSource="{Binding FamilySetDtoList}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <Image Source="{Binding Path}" Width="25" Height="25"/>
+                        <DockPanel>
+                            <TextBlock Text="{Binding Name}"/>
+                            <Button Command="{Binding DataContext.RemoveFamilySet, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}"
+                                        CommandParameter="{Binding }"
+                                        Background="{x:Null}"
+                                        BorderBrush="{x:Null}"
+                                        DockPanel.Dock="Left" 
+                                        Width="15" Height="15" 
+                                        Margin="10 0 0 0" 
+                                        VerticalAlignment="Center"  
+                                        HorizontalAlignment="Left"
+                                        Visibility="{Binding DataContext.IsVisable, Converter={StaticResource BoolToVisConverter}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}} }">
+                                <Image Source="Resources/minus.png"></Image>
+                            </Button>
+                        </DockPanel>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <Button Visibility="{Binding IsVisable, Converter={StaticResource BoolToVisConverter}}" Width="24" Height="24" Content="+" Command="{Binding AddFamily}" DockPanel.Dock="Left" Grid.Row="1" HorizontalAlignment="Left" Margin="2 2 2 2"/>
+            <Button Visibility="{Binding IsVisable, Converter={StaticResource BoolToVisConverter}}" 
+                    Width="26" Height="26" 
+                    BorderBrush="{x:Null}"
+                    Background="{x:Null}"
+                    Command="{Binding AddFamilySet}" 
+                    DockPanel.Dock="Left"
+                    HorizontalAlignment="Left" 
+                    Margin="2 2 2 2">
+                <Image Source="Resources/icons8-plus-64.png"/>
+            </Button>
         </DockPanel>
-        <DockPanel Grid.Row="1" Width="auto">
+        <!--#region Add new family and refresh -->
+        <DockPanel Grid.Row="1" VerticalAlignment="Bottom" Visibility="{Binding IsVisable, Converter={StaticResource BoolToVisConverter}, Mode=TwoWay}">
+            <TextBox Text="{Binding FamilyName, Mode=TwoWay}" 
+                     Width="{Binding TextboxWidth, Mode=TwoWay}" 
+                     Height="26"
+                     Margin="0 0 5 0"
+                     DockPanel.Dock="Left"
+                     Visibility="{Binding IsVisable, Converter={StaticResource BoolToVisConverter}, Mode=TwoWay}"/>
+            <ComboBox ItemsSource="{Binding ImageDtoList}" 
+                      Width="60" Height="26" 
+                      SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}" 
+                      DockPanel.Dock="Left" 
+                      Visibility="{Binding IsVisable, Converter={StaticResource BoolToVisConverter}}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <Image Source="{Binding Path}" Width="20" Height="20" VerticalAlignment="Center"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+                <ComboBox.Resources>
+                    <Style TargetType="ComboBox">
+                        <Setter Property="ItemsPanel">
+                            <Setter.Value>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel IsItemsHost="True" Orientation="Vertical" Width="200" Height="350"/>
+                                </ItemsPanelTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Width" Value="50" />
+                    </Style>
+                </ComboBox.Resources>
+            </ComboBox>
+            <Button Visibility="{Binding IsVisable, Converter={StaticResource BoolToVisConverter}}" 
+                    Width="26" Height="26" 
+                    BorderBrush="{x:Null}"
+                    Background="{x:Null}"
+                    Command="{Binding AddFamily}" 
+                    DockPanel.Dock="Left"
+                    HorizontalAlignment="Left" 
+                    Margin="2 2 2 2">
+                <Image Source="Resources/icons8-plus-64.png"/>
+            </Button>
+            <Button Visibility="{Binding IsVisable, Converter={StaticResource BoolToVisConverter}}" 
+                    Width="26" Height="26" 
+                    BorderBrush="{x:Null}"
+                    Background="{x:Null}"
+                    Command="{Binding Refresh}" 
+                    DockPanel.Dock="Left" 
+                    HorizontalAlignment="Left" Margin="2 2 2 2">
+                <Image Source="Resources/floppy-disk.png"/>
+            </Button>
+        </DockPanel>
+        <!--#endregion-->
+        <DockPanel Grid.Row="2" Width="auto">
+            <Line Stroke="Black" X2="{Binding ActualWidth, RelativeSource={RelativeSource Self}}"
+                 StrokeDashArray="2 2" StrokeThickness="1" 
+                  DockPanel.Dock="Top" Visibility="{Binding IsVisable, Converter={StaticResource BoolToVisConverter}, Mode=TwoWay}"/>
             <ListBox BorderThickness="0" 
                      ItemsSource="{Binding FamDtoList}" 
-                     HorizontalAlignment="Left" 
+                     HorizontalAlignment="Center" 
+                     VerticalAlignment="Top"
                      DockPanel.Dock="Top" 
                      Height="{Binding ElementName=Row, Path=Height}" 
                      Width="{Binding ListboxWidth, Mode=TwoWay}" 
@@ -58,7 +140,6 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <DockPanel HorizontalAlignment="Left" Margin="25 0 0 0">
-
                             <Grid DockPanel.Dock="Left">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="34"/>
@@ -67,8 +148,9 @@
                                 <DockPanel Grid.Row="0">
                                     <Button Command="{Binding DataContext.UseFamily, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}" 
                                         CommandParameter="{Binding }"
-                                        Background="White" 
-                                            DockPanel.Dock="Left"
+                                        Background="{x:Null}"
+                                        BorderBrush="{x:Null}"
+                                        DockPanel.Dock="Left"
                                         Width="32" Height="32" 
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center" ToolTip="{Binding Name}">
@@ -76,16 +158,17 @@
                                     </Button>
                                     <Button Command="{Binding DataContext.RemoveFamily, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}}}"
                                         CommandParameter="{Binding }"
+                                        Background="{x:Null}"
+                                        BorderBrush="{x:Null}"
                                         DockPanel.Dock="Left" 
                                         Width="15" Height="15" 
                                         Margin="10 0 0 0" 
                                         VerticalAlignment="Center"  
                                         HorizontalAlignment="Left"
                                         Visibility="{Binding DataContext.IsVisable, Converter={StaticResource BoolToVisConverter}, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Page}} }">
-                                        <Image Source="Resources/icons8-minus-64.png"></Image>
+                                        <Image Source="Resources/minus.png"></Image>
                                     </Button>
                                 </DockPanel>
-
                                 <TextBlock 
                                     Text="{Binding Name}" 
                                     Grid.Row="1"
@@ -96,6 +179,12 @@
                         </DockPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
+                <ListBox.LayoutTransform>
+                    <TransformGroup>
+                        <RotateTransform Angle="0"/>
+                    </TransformGroup>
+                </ListBox.LayoutTransform>
+
             </ListBox>
         </DockPanel>
     </Grid>

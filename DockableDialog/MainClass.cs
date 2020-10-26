@@ -8,7 +8,6 @@ using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Events;
 using DockableDialog.EventHendler;
-using DockableDialog.Properties;
 using DockableDialog.ViewModel;
 
 namespace DockableDialog
@@ -33,7 +32,7 @@ namespace DockableDialog
             try
             {
                 // register dockable pane
-                application.RegisterDockablePane(id, "TwentyTwo Dockable Sample", dockableWindow as IDockablePaneProvider);
+                application.RegisterDockablePane(id, "Family Palette", dockableWindow as IDockablePaneProvider);
                 //TaskDialog.Show("Info Message", "Dockable window have registered!");
                 // subscribe document opened event
                 //application.Application.DocumentOpened += new EventHandler<Autodesk.Revit.DB.Events.DocumentOpenedEventArgs>(Application_DocumentOpened);
@@ -49,7 +48,7 @@ namespace DockableDialog
 
 
 
-            RibbonPanel ribbonPanel = application.CreateRibbonPanel(Tab.AddIns, "TwentyTwo Sample");
+            RibbonPanel ribbonPanel = application.CreateRibbonPanel(Tab.AddIns, "Family Palette");
             Assembly assembly = Assembly.GetExecutingAssembly();
             string assemblyPath = assembly.Location;
 
@@ -72,21 +71,21 @@ namespace DockableDialog
             //showButton.LargeImage = GetResourceImage(assembly, "Resources.green.png");
             //showButton.Image = GetResourceImage(assembly, "Resources.green.png");
 
-            MainWindowViewModel mainWindowViewModel = new MainWindowViewModel(application);
+            MainWindowViewModel mainWindowViewModel = new MainWindowViewModel();
             //ImageSelectViewModel imageSelectViewModel = new ImageSelectViewModel();
 
             GetFamilySymbolEventHendler registerEventHendler = new GetFamilySymbolEventHendler();
             PasteFamilyEventHendler pasteFamilyEventHendler = new PasteFamilyEventHendler();
-
+            GetFamilyByIdEventHendler getFamilyByIdEventHendler = new GetFamilyByIdEventHendler();
 
             ExternalEvent ExEventGetFamily = ExternalEvent.Create(registerEventHendler);
             ExternalEvent ExEventPasteFamily = ExternalEvent.Create(pasteFamilyEventHendler);
-
+            ExternalEvent ExEventgetFamilyById = ExternalEvent.Create(getFamilyByIdEventHendler);
 
 
             mainWindowViewModel.ApplyEventGetFamily = ExEventGetFamily;
             mainWindowViewModel.ApplyPasteGetFamily = ExEventPasteFamily;
-
+            mainWindowViewModel.ApplyEventGetFamilyById = ExEventgetFamilyById;
 
             dockableWindow.DataContext = mainWindowViewModel;
             //imageSelect.DataContext = imageSelectViewModel;

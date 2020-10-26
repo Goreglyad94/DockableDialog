@@ -20,18 +20,15 @@ namespace DockableDialog.EventHendler
     {
         public static string Path;
         public static string FamilyName;
+        public static event Action<object> ChangeUI;
         public void Execute(UIApplication app)
         {
             Transaction trans = new Transaction(app.ActiveUIDocument.Document, "Получить выбранные семейства");
             trans.Start();
-
             UIDocument uidoc = app.ActiveUIDocument;
             Autodesk.Revit.DB.Document doc = uidoc.Document;
             Selection sel = app.ActiveUIDocument.Selection;
             ICollection<Autodesk.Revit.DB.ElementId> selectedIds = uidoc.Selection.GetElementIds();
-
-            
-
             //Reference annotation = sel.PickObject(ObjectType.Element, "Select item");
             FamilyInstance elem = doc.GetElement(selectedIds.FirstOrDefault()) as FamilyInstance;
             FamilySymbol familySymbol = elem.Symbol;
@@ -47,8 +44,11 @@ namespace DockableDialog.EventHendler
 
             famDto.FamilySymbolDto = familySymbol;
             famDto.ImagePath = Path;
-            MainWindowViewModel.FamilySymbolList.Add(famDto);
+            famDto.ID = familySymbol.Id.ToString();
+            MainWindowViewModel.familyDto = famDto;
+            //MainWindowViewModel.FamilySymbolList.Add(famDto);
             trans.Commit();
+            ChangeUI?.Invoke(this);
         }
         public string GetName() => nameof(GetFamilySymbolEventHendler);
     }
